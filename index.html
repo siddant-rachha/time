@@ -57,7 +57,7 @@
     const endDate = new Date(constants.futureDate)
     const setCurrentTime = () => {
         const d = new Date();
-        let currentDate = `${d.getFullYear()}-${d.getMonth()}-${d.getDay()},
+        let currentDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()},
         hrs: ${d.getHours()}, min: ${d.getMinutes()}, sec: ${d.getSeconds()}`;
         document.getElementById('todaysdate').innerHTML = currentDate;
     }
