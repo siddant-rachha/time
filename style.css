@@ -1,0 +1,85 @@
+.title {
+    color: red;
+    text-align: center;
+}
+
+.seperator {
+    width: 80%;
+}
+
+.subheader {
+    font-size: large;
+    margin-bottom: 20px;
+    color: blue;
+    font-weight: bold;
+}
+
+.content {
+    font-size: medium;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.block {
+    text-align: center;
+}
+
+/* css related to tally */
+#tallycontent{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+.tallyblock {
+    height: 50px;
+    padding: 2px;
+    width: 45px;
+    float: left;
+    display: flex;
+    align-items: center;
+}
+
+.tallylinestraight {
+    height: 35px;
+    width: 5px;
+    background-color: green;
+    float: left;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+.tallylineslant {
+    height: 50px;
+    width: 5px;
+    background-color: green;
+    float: left;
+    margin: 2px;
+    transform: rotate(-55deg);
+    position: relative;
+    left: -22px;
+    border-radius: 5px;
+}
+
+.tallylinestraightfaded {
+    height: 35px;
+    width: 5px;
+    background-color: hsla(120, 100%, 25%, 0.15);
+    float: left;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+.tallylineslantfaded {
+    height: 50px;
+    width: 5px;
+    background-color: hsla(120, 100%, 25%, 0.15);
+    float: left;
+    margin: 2px;
+    transform: rotate(-55deg);
+    position: relative;
+    left: -22px;
+    border-radius: 5px;
+
+}
+/* ---------- */

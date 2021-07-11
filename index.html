@@ -5,92 +5,119 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- constants -->
+    <script src="constants.js"></script>
+    <script src="validateConstants.js"></script>
+    <!--  -->
+
+    <!-- utilities -->
+    <script defer src="calculateDateDiff.js"></script>
+    <script defer src="getCurrentDateInSlash.js"></script>
+    <script defer src="getAnyDateInSlash.js"></script>
+    <script defer src="singleToDoubleDigit.js"></script>
+    <!--  -->
+
+    <script defer src="blink.js"></script>
+    <script defer src="script.js"></script>
     <title>ENDGAME</title>
 </head>
-<style>
-    .title {
-        color: red;
-        text-align: center;
-    }
-
-    .seperator {
-        width: 80%;
-    }
-
-    .subheader {
-        font-size: large;
-        margin-bottom: 20px;
-        color: blue;
-        font-weight: bold;
-    }
-
-    .content {
-        font-size: medium;
-        margin-bottom: 20px;
-        font-weight: bold;
-    }
-    .block{
-        text-align: center;
-    }
-</style>
 
 <body>
-    <div class="block">
+    <div class="block" id="block">
         <h1 class="title">ENDGAME</h1>
         <hr class="seperator">
 
         <p class="subheader">Final Game</p>
-        <p class="content">2021-12-05</p>
+        <p class="content" id="content"></p>
+        <script>
+            document.getElementById('content').innerHTML = constants.futureDate
+        </script>
 
         <p class="subheader">Today's Date</p>
         <p class="content" id="todaysdate">Loading...</p>
 
-        <p class="subheader">Time Remaining</p>
+        <p class="subheader">Hours Remaining</p>
         <p class="content" id="remainingtime">Loading...</p>
     </div>
+    <hr />
+    <div id="tallycontent"></div>
 </body>
 <script>
-    const constants = {
-        futureDate : "2021-12-5"
+    const createTallyBlock = () => {
+        let tallyblock = document.createElement('div')
+        tallyblock.className = "tallyblock"
+        return tallyblock
     }
-    
-    const endDate = new Date(constants.futureDate)
-    const setCurrentTime = () => {
-        const d = new Date();
-        let currentDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()},
-        hrs: ${d.getHours()}, min: ${d.getMinutes()}, sec: ${d.getSeconds()}`;
-        document.getElementById('todaysdate').innerHTML = currentDate;
+    const appendTallyLineStraight = (block) => {
+        let tallylinestraight = document.createElement('div')
+        tallylinestraight.className = "tallylinestraight"
+        block.appendChild(tallylinestraight)
+        return block
     }
-    const getTimeRemaining = () => {
-        const d = new Date();
-        const diffTime = Math.abs(endDate - d);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        let currentDate = `Days: ${diffDays} hrs: ${(diffTime / 3600000).toFixed(0)},
-         min: ${((diffTime / 3600000) * 60).toFixed(0)},
-          sec: ${((diffTime / 3600000) * 60 * 60).toFixed(0)}`;
-        document.getElementById('remainingtime').innerHTML = currentDate;
+    const appendTallyLineSlant = (block) => {
+        let tallylineslant = document.createElement('div')
+        tallylineslant.className = "tallylineslant"
+        block.appendChild(tallylineslant)
+        return block
     }
-    const blink = () => {
-        let color = document.getElementById('todaysdate').style.color
-        if (color != "red") {
-            document.getElementById('todaysdate').style.color = "red";
-            document.getElementById('remainingtime').style.color = "red";
-        }
-        else {
-            document.getElementById('todaysdate').style.color = "black";
-            document.getElementById('remainingtime').style.color = "black";
-        }
+    const appendTallyLineStraightFaded = (block) => {
+        let tallylinestraightfaded = document.createElement('div')
+        tallylinestraightfaded.className = "tallylinestraightfaded"
+        block.appendChild(tallylinestraightfaded)
+        return block
     }
-
-    const beep = () => {
-        var snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
-        snd.play();
+    const appendTallyLineSlantFaded = (block) => {
+        let tallylineslantfaded = document.createElement('div')
+        tallylineslantfaded.className = "tallylineslantfaded"
+        block.appendChild(tallylineslantfaded)
+        return block
+    }
+    const appendToTallyBlock = (div) => {
+        document.getElementById('tallycontent').appendChild(div)
     }
 
     setInterval(() => { setCurrentTime() }, 1000);
-    setInterval(() => { getTimeRemaining() }, 1000);
+    setInterval(() => { getHoursRemaining() }, 1000);
     setInterval(() => { blink() }, 1000);
-    setInterval(() => { beep() }, 1000);
+
+    setTimeout(() => {
+        let diff = calculateDateDiff(getAnyDateInSlash(constants.startDate), getCurrentDateInSlash()) + 1
+        console.log(diff)
+        let finaldiff = calculateDateDiff(getAnyDateInSlash(constants.startDate), getAnyDateInSlash(constants.futureDate)) - 1
+        console.log(finaldiff)
+        //number of tally blocks required
+        let noOfTallyBlocks = Math.ceil(finaldiff / 5)
+        while (noOfTallyBlocks > 0) {
+            let tallyblock = createTallyBlock()
+            for (let i = 1; i <= 5; i++) {
+                if (finaldiff == 0) {
+                    continue
+                }
+                if (i != 5) {
+                    if (diff > 0) {
+                        appendTallyLineStraight(tallyblock)
+                    }
+                    else {
+                        appendTallyLineStraightFaded(tallyblock)
+                    }
+                }
+                else {
+                    if (diff > 0) {
+                        appendTallyLineSlant(tallyblock)
+                    }
+                    else {
+                        appendTallyLineSlantFaded(tallyblock)
+                    }
+                }
+                diff--
+                finaldiff--
+            }
+            noOfTallyBlocks--
+            appendToTallyBlock(tallyblock)
+        }
+    }, 1000);
 
 </script>
 
